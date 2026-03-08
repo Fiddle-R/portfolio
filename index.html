@@ -386,6 +386,123 @@
       letter-spacing: 0.05em;
     }
 
+    /* ── DEMO BUTTON ON PROJECT CARD ── */
+    .demo-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding: 0.5rem 1rem;
+      background: rgba(0,120,212,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(0,120,212,0.3);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .demo-btn:hover {
+      background: rgba(0,120,212,0.3);
+      border-color: var(--accent2);
+      transform: translateX(3px);
+    }
+
+    /* ── INTERACTIVE DEMOS SECTION ── */
+    .demos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .demo-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .demo-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      opacity: 1;
+    }
+    .demo-card-soon::after {
+      opacity: 0.3;
+    }
+    .demo-card:hover {
+      border-color: rgba(0,120,212,0.4);
+      transform: translateY(-3px);
+    }
+    .demo-card-soon { opacity: 0.6; }
+    .demo-card-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .demo-icon { font-size: 1.5rem; }
+    .demo-live-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: rgba(0,229,160,0.1);
+      border: 1px solid rgba(0,229,160,0.2);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+    .demo-coming-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+    .demo-card-title {
+      font-family: var(--font-head);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .demo-card-desc {
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.8;
+      margin-bottom: 1.25rem;
+      flex: 1;
+    }
+    .demo-card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+    .demo-card-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.65rem 1.25rem;
+      background: var(--accent2);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      align-self: flex-start;
+    }
+    .demo-card-btn:hover {
+      background: #0086ef;
+      transform: translateX(3px);
+    }
+
     /* ── EXPERIENCE ── */
     #experience { }
     .timeline { position: relative; padding-left: 2rem; }
@@ -515,6 +632,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#projects">Projects</a></li>
+    <li><a href="#demos">Demos</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -783,7 +901,86 @@
         <span class="project-tag">SharePoint</span>
         <span class="project-tag">Excel / Reporting</span>
       </div>
+      <a href="/offboarding-demo.html" class="demo-btn">⚡ Live Demo →</a>
     </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE DEMOS -->
+<section id="demos">
+  <div class="section-label">Interactive Demos</div>
+  <h2>Try it yourself</h2>
+  <p class="section-desc">
+    The projects above represent production-scale implementations across enterprise environments serving thousands of users. The tools below are working scaled-down versions built on Azure — designed so you can experience the architecture and thinking firsthand.
+  </p>
+  <div class="demos-grid">
+
+    <div class="demo-card">
+      <div class="demo-card-header">
+        <div class="demo-icon">⚡</div>
+        <div class="demo-live-badge">● LIVE ON AZURE</div>
+      </div>
+      <div class="demo-card-title">Automated Offboarding Orchestrator</div>
+      <p class="demo-card-desc">
+        Select a test employee and watch a real Azure Logic App execute a full offboarding workflow via Microsoft Graph API — disabling accounts, revoking sessions, removing group memberships, and sending you an actual email notification.
+      </p>
+      <div class="demo-card-tags">
+        <span class="project-tag">Azure Logic Apps</span>
+        <span class="project-tag">Microsoft Graph API</span>
+        <span class="project-tag">Entra ID</span>
+        <span class="project-tag">Exchange Online</span>
+      </div>
+      <a href="/offboarding-demo.html" class="demo-card-btn">⚡ Launch Demo →</a>
+    </div>
+
+    <div class="demo-card demo-card-soon">
+      <div class="demo-card-header">
+        <div class="demo-icon">👥</div>
+        <div class="demo-coming-badge">COMING SOON</div>
+      </div>
+      <div class="demo-card-title">Guest Access Governance</div>
+      <p class="demo-card-desc">
+        An interactive tool that audits guest user accounts, flags stale or risky access, and generates a governance report — based on real enterprise guest lifecycle management work.
+      </p>
+      <div class="demo-card-tags">
+        <span class="project-tag">Entra ID</span>
+        <span class="project-tag">Graph API</span>
+        <span class="project-tag">Access Reviews</span>
+      </div>
+    </div>
+
+    <div class="demo-card demo-card-soon">
+      <div class="demo-card-header">
+        <div class="demo-icon">🤖</div>
+        <div class="demo-coming-badge">COMING SOON</div>
+      </div>
+      <div class="demo-card-title">Copilot Readiness Assessment</div>
+      <p class="demo-card-desc">
+        Answer questions about your M365 environment and receive a scored readiness report covering identity, data governance, and licensing requirements for Microsoft 365 Copilot deployment.
+      </p>
+      <div class="demo-card-tags">
+        <span class="project-tag">M365 Copilot</span>
+        <span class="project-tag">Microsoft Purview</span>
+        <span class="project-tag">Zero Trust</span>
+      </div>
+    </div>
+
+    <div class="demo-card demo-card-soon">
+      <div class="demo-card-header">
+        <div class="demo-icon">📊</div>
+        <div class="demo-coming-badge">COMING SOON</div>
+      </div>
+      <div class="demo-card-title">M365 License Optimizer</div>
+      <p class="demo-card-desc">
+        Upload a sample license report and receive optimization recommendations — identifying unused licenses, rightsizing opportunities, and potential cost savings across your M365 tenant.
+      </p>
+      <div class="demo-card-tags">
+        <span class="project-tag">License Management</span>
+        <span class="project-tag">Cost Optimization</span>
+        <span class="project-tag">Graph API</span>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -838,8 +1035,8 @@
     Open to architecture-focused M365 / Azure roles, consulting engagements, and technical conversations.
   </p>
   <div class="contact-links">
-    <a href="mailto:fiddle2r@outlook.com" class="contact-link">
-      <span>📧</span> fiddle2r@outlook.com
+    <a href="/cdn-cgi/l/email-protection#d7b1beb3b3bbb2e5a597b8a2a3bbb8b8bcf9b4b8ba" class="contact-link">
+      <span>📧</span> <span class="__cf_email__" data-cfemail="385e515c5c545d0a4a78574d4c54575753165b5755">[email&#160;protected]</span>
     </a>
     <a href="https://www.linkedin.com/in/fiddle-reynoso-835b318" target="_blank" class="contact-link">
       <span>💼</span> LinkedIn
@@ -856,19 +1053,10 @@
   <div>Built on Azure Static Web Apps</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Scroll-triggered fade-in
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.style.opacity = '1';
-        e.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll(
-    '.skill-category, .project-card, .timeline-item, .stat-box'
-  ).forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 
+        e.target

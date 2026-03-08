@@ -518,7 +518,7 @@
 
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false">
   // ============================================================
   // ⚠️  PASTE YOUR LOGIC APP URL HERE AFTER BUILDING IT IN AZURE
   // ============================================================
@@ -529,10 +529,11 @@
   // Send FROM your account TO triggerBody()?['managerEmail']
   // ============================================================
 
+  const d = 'messacanyon.onmicrosoft.com';
   const employees = {
-    'john': { name: 'John Doe',   initials: 'JD', email: 'john.doe@messacanyon.onmicrosoft.com' },
-    'jane': { name: 'Jane Smith', initials: 'JS', email: 'jane.smith@messacanyon.onmicrosoft.com' },
-    'bob':  { name: 'Bob Jones',  initials: 'BJ', email: 'bob.jones@messacanyon.onmicrosoft.com' }
+    'john': { name: 'John Doe',   initials: 'JD', email: 'john.doe@' + d },
+    'jane': { name: 'Jane Smith', initials: 'JS', email: 'jane.smith@' + d },
+    'bob':  { name: 'Bob Jones',  initials: 'BJ', email: 'bob.jones@' + d }
   };
 
   function checkRunButton() {

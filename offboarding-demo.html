@@ -4,8 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Automated Offboarding Orchestrator — Live Demo</title>
+  <!-- Application Insights -->
+  <script type="text/javascript">
+  !function(T,l,y){var S=T.location,k="script",D="instrumentationKey",C="ingestionendpoint",I="disableExceptionTracking",E="ai.device.",b="toLowerCase",w="crossOriginSummary",N="toString",P="toLowerCase",j={id:"d9e88a55-ad4b-4dd0-b7aa-b92e14e5e9f4"},V=1,q="";function H(e){var t=e.split(" ").join("_");return encodeURIComponent(t)}function W(e,t,n){var a=t.split("."),r=e;for(var i=0;i<a.length;i++)r=r[a[i]];return"function"==typeof r?r.call(e,n):r}!function(){var A=T[l];if(!A){var L={config:{connectionString:"InstrumentationKey=94eab42b-ad09-467e-8ff5-a87d503f53f9;IngestionEndpoint=https://eastus2-3.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus2.livediagnostics.monitor.azure.com/;ApplicationId=bee78c23-58cb-4e26-bd21-383ac535da58"},initialize:!0,queue:[],sv:"5",version:2,onunloadDisableBeacon:!1,correlationHeaderExcludedDomains:["*.queue.core.windows.net"]};T[l]=L;var R=document.createElement(k);R.src="https://js.monitor.azure.com/scripts/b/ai.2.min.js";R.onload=function(){L.initialize=!0;for(var e=0;e<L.queue.length;e++)L.queue[e]()};document.head.appendChild(R)}}()}(window,"appInsights");
+  var appInsights = window.appInsights || {trackEvent:function(){},trackPageView:function(){}};
+  appInsights.trackPageView && appInsights.trackPageView({name: "Offboarding Demo"});
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

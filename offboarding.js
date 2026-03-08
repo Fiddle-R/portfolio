@@ -77,6 +77,14 @@ async function runOffboarding() {
   document.getElementById('empStatus').textContent    = 'Processing';
   document.getElementById('empStatus').className      = 'emp-status';
 
+  // Track demo run event in Application Insights
+  if (window.appInsights && window.appInsights.trackEvent) {
+    window.appInsights.trackEvent({
+      name: 'OffboardingDemoRun',
+      properties: { employee: emp.name, timestamp: new Date().toISOString() }
+    });
+  }
+
   setStep('disable', 'running', 'PATCH /users/' + email + ' accountEnabled: false');
   await sleep(1200);
   setStep('revoke',  'running', 'POST /users/' + email + '/revokeSignInSessions');

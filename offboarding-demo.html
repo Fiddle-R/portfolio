@@ -403,9 +403,9 @@
         <label>Select Employee</label>
         <select id="employeeSelect" onchange="updateEmployeeCard()">
           <option value="">— Choose an employee —</option>
-          <option value="john.doe@messacanyon.onmicrosoft.com" data-name="John Doe" data-initials="JD">John Doe — Engineering</option>
-          <option value="jane.smith@messacanyon.onmicrosoft.com" data-name="Jane Smith" data-initials="JS">Jane Smith — Marketing</option>
-          <option value="bob.jones@messacanyon.onmicrosoft.com" data-name="Bob Jones" data-initials="BJ">Bob Jones — Finance</option>
+          <option value="john">John Doe — Engineering</option>
+          <option value="jane">Jane Smith — Marketing</option>
+          <option value="bob">Bob Jones — Finance</option>
         </select>
       </div>
 
@@ -530,9 +530,9 @@
   // ============================================================
 
   const employees = {
-    'john.doe@messacanyon.onmicrosoft.com':  { name: 'John Doe',   initials: 'JD' },
-    'jane.smith@messacanyon.onmicrosoft.com': { name: 'Jane Smith', initials: 'JS' },
-    'bob.jones@messacanyon.onmicrosoft.com':  { name: 'Bob Jones',  initials: 'BJ' }
+    'john': { name: 'John Doe',   initials: 'JD', email: 'john.doe@messacanyon.onmicrosoft.com' },
+    'jane': { name: 'Jane Smith', initials: 'JS', email: 'jane.smith@messacanyon.onmicrosoft.com' },
+    'bob':  { name: 'Bob Jones',  initials: 'BJ', email: 'bob.jones@messacanyon.onmicrosoft.com' }
   };
 
   function checkRunButton() {
@@ -543,20 +543,20 @@
   }
 
   function updateEmployeeCard() {
-    const sel = document.getElementById('employeeSelect');
+    const sel  = document.getElementById('employeeSelect');
     const card = document.getElementById('employeeCard');
-    const email = sel.value;
+    const key  = sel.value;
 
-    if (!email) { card.style.display = 'none'; checkRunButton(); return; }
+    if (!key) { card.style.display = 'none'; checkRunButton(); return; }
 
-    const emp = employees[email];
+    const emp = employees[key];
     document.getElementById('empAvatar').textContent = emp.initials;
-    document.getElementById('empName').textContent = emp.name;
-    document.getElementById('empEmail').textContent = email;
+    document.getElementById('empName').textContent   = emp.name;
+    document.getElementById('empEmail').textContent  = emp.email;
 
     const status = document.getElementById('empStatus');
     status.textContent = 'Active';
-    status.className = 'emp-status active';
+    status.className   = 'emp-status active';
 
     card.style.display = 'flex';
     checkRunButton();
@@ -589,13 +589,14 @@
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   async function runOffboarding() {
-    const email   = document.getElementById('employeeSelect').value;
+    const key     = document.getElementById('employeeSelect').value;
     const manager = document.getElementById('managerEmail').value;
 
-    if (!email) { alert('Please select an employee first.'); return; }
+    if (!key) { alert('Please select an employee first.'); return; }
     if (!manager) { alert('Please enter your email address to receive the notification.'); return; }
 
-    const emp = employees[email];
+    const emp   = employees[key];
+    const email = emp.email;
 
     // Update UI
     document.getElementById('runBtn').disabled = true;

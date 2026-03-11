@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guest Access Governance | Fiddle Reynoso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="/analytics.js"></script>
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --border: #1e2d45;
+      --accent: #0ea5e9;
+      --accent2: #38bdf8;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --red-soft: rgba(239,68,68,0.12);
+      --yellow-soft: rgba(245,158,11,0.12);
+      --green-soft: rgba(16,185,129,0.12);
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --font-body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,15,26,0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: white;
+    }
+    .nav-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .nav-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .nav-back {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--accent); text-decoration: none;
+      font-size: 0.85rem; font-weight: 500;
+      transition: gap 0.2s;
+    }
+    .nav-back:hover { gap: 0.75rem; }
+
+    /* HERO */
+    .hero {
+      padding: 3rem 2rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.25);
+      color: var(--accent2); padding: 0.35rem 0.85rem;
+      border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+      font-family: var(--font-mono); margin-bottom: 1.25rem;
+      letter-spacing: 0.05em;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      background: var(--green); border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-family: var(--font-body);
+      color: var(--text-dim);
+      font-size: 1rem;
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    /* ARCH PILLS */
+    .arch-pills {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .arch-pill {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-dim); padding: 0.4rem 0.85rem;
+      border-radius: 6px; font-size: 0.75rem; font-family: var(--font-mono);
+    }
+    .arch-pill span { color: var(--accent); }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+    }
+    .stat-item {
+      background: var(--surface);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.75rem; font-weight: 800;
+      color: var(--accent); display: block;
+      font-family: var(--font-mono);
+    }
+    .stat-label {
+      font-size: 0.72rem; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 0.25rem;
+    }
+
+    /* MAIN LAYOUT */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-title::before {
+      content: ''; display: block;
+      width: 16px; height: 2px;
+      background: var(--accent);
+    }
+
+    /* AUDIT BUTTON */
+    .btn-audit {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      color: white; border: none; cursor: pointer;
+      padding: 0.7rem 1.5rem; border-radius: 8px;
+      font-family: var(--font-main); font-weight: 600; font-size: 0.875rem;
+      transition: all 0.2s; box-shadow: 0 4px 20px rgba(14,165,233,0.3);
+    }
+    .btn-audit:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(14,165,233,0.4); }
+    .btn-audit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* LOADING */
+    .loading-state {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+    .loading-state.active { display: block; }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-steps { font-family: var(--font-mono); font-size: 0.78rem; }
+    .loading-step {
+      display: flex; align-items: center; gap: 0.5rem;
+      justify-content: center;
+      color: var(--text-muted); margin: 0.35rem 0;
+      opacity: 0; transform: translateY(4px);
+      transition: all 0.3s;
+    }
+    .loading-step.show { opacity: 1; transform: translateY(0); }
+    .loading-step .step-icon { color: var(--accent); }
+
+    /* GUEST CARDS */
+    .guests-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .guest-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.25rem;
+      align-items: start;
+      transition: all 0.3s;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .guest-card.show { opacity: 1; transform: translateY(0); }
+    .guest-card.revoked {
+      opacity: 0.4;
+      border-color: transparent;
+      background: var(--surface2);
+    }
+    .guest-card.revoking {
+      border-color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .guest-avatar {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; color: white;
+      flex-shrink: 0;
+    }
+
+    .guest-info { min-width: 0; }
+    .guest-name {
+      font-weight: 700; font-size: 1rem;
+      color: var(--text); margin-bottom: 0.25rem;
+    }
+    .guest-email {
+      font-family: var(--font-mono); font-size: 0.75rem;
+      color: var(--text-muted); margin-bottom: 0.75rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .guest-meta {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .meta-chip {
+      display: flex; align-items: center; gap: 0.35rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-dim); padding: 0.25rem 0.65rem;
+      border-radius: 5px; font-size: 0.72rem; font-family: var(--font-mono);
+    }
+
+    .guest-actions {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .risk-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 700;
+      font-family: var(--font-mono); text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .risk-high { background: var(--red-soft); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .risk-medium { background: var(--yellow-soft); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+    .risk-low { background: var(--green-soft); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+
+    .btn-revoke {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--red-soft); border: 1px solid rgba(239,68,68,0.3);
+      color: var(--red); cursor: pointer;
+      padding: 0.5rem 1rem; border-radius: 7px;
+      font-family: var(--font-main); font-weight: 600; font-size: 0.78rem;
+      transition: all 0.2s;
+    }
+    .btn-revoke:hover { background: rgba(239,68,68,0.2); border-color: var(--red); }
+    .btn-revoke:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .revoked-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      color: var(--text-muted); font-size: 0.78rem; font-family: var(--font-mono);
+    }
+
+    /* EMPTY / ERROR STATES */
+    .empty-state {
+      text-align: center; padding: 4rem 2rem;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .empty-state p { font-family: var(--font-body); line-height: 1.6; }
+
+    /* REPORT SECTION */
+    .report-section {
+      margin-top: 2.5rem;
+      display: none;
+    }
+    .report-section.active { display: block; }
+    .report-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .report-header {
+      background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(99,102,241,0.1));
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .report-title {
+      font-weight: 700; font-size: 0.875rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .report-body { padding: 1.5rem; }
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .report-stat {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem;
+      text-align: center;
+    }
+    .report-stat-num {
+      font-size: 1.5rem; font-weight: 800;
+      font-family: var(--font-mono); display: block;
+    }
+    .report-stat-label {
+      font-size: 0.7rem; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .report-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.8rem; font-family: var(--font-mono);
+    }
+    .report-table th {
+      text-align: left; padding: 0.6rem 0.75rem;
+      color: var(--text-muted); font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.7rem;
+    }
+    .report-table td {
+      padding: 0.75rem; border-bottom: 1px solid rgba(30,45,69,0.5);
+      color: var(--text-dim);
+    }
+    .report-table tr:last-child td { border-bottom: none; }
+
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-dim); cursor: pointer;
+      padding: 0.6rem 1.25rem; border-radius: 7px;
+      font-family: var(--font-main); font-weight: 600; font-size: 0.8rem;
+      transition: all 0.2s; margin-top: 1.25rem;
+    }
+    .btn-download:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ARCHITECTURE NOTE */
+    .arch-note {
+      margin-top: 2.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .arch-note-title {
+      font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .arch-flow {
+      display: flex; align-items: center;
+      flex-wrap: wrap; gap: 0.5rem;
+      font-family: var(--font-mono); font-size: 0.75rem;
+    }
+    .arch-node {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-dim); padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+    }
+    .arch-arrow { color: var(--accent); font-weight: 700; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.85rem; max-width: 320px;
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.3s; z-index: 999;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 1.1rem; }
+
+    @media (max-width: 640px) {
+      .guest-card { grid-template-columns: auto 1fr; }
+      .guest-actions { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+      .report-grid { grid-template-columns: 1fr; }
+      .hero { padding: 2rem 1rem 1.5rem; }
+      .main { padding: 0 1rem 3rem; }
+      nav { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <div class="nav-logo">FR</div>
+    <div>
+      <div class="nav-title">Fiddle Reynoso</div>
+      <div class="nav-sub">Enterprise M365 Architect</div>
+    </div>
+  </a>
+  <a href="/" class="nav-back">
+    ← Back to Portfolio
+  </a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">
+    <span class="live-dot"></span>
+    LIVE ON AZURE · DEMO 2 of 4
+  </div>
+  <h1>Guest Access<br>Governance</h1>
+  <p>
+    A real-time audit tool that queries Microsoft Entra ID via Graph API, 
+    identifies external guest users, calculates risk scores based on sign-in 
+    activity, and enables one-click access revocation — all orchestrated through 
+    Azure Logic Apps.
+  </p>
+  <div class="arch-pills">
+    <div class="arch-pill"><span>⚡</span> Azure Logic Apps</div>
+    <div class="arch-pill"><span>🔗</span> Microsoft Graph API</div>
+    <div class="arch-pill"><span>🛡️</span> Microsoft Entra ID</div>
+    <div class="arch-pill"><span>🔍</span> AuditLog.Read.All</div>
+    <div class="arch-pill"><span>👥</span> User.ReadWrite.All</div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item">
+      <span class="stat-num" id="statTotal">—</span>
+      <div class="stat-label">Total Guests</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" style="color:var(--red)" id="statHigh">—</span>
+      <div class="stat-label">High Risk</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" style="color:var(--yellow)" id="statMed">—</span>
+      <div class="stat-label">Medium Risk</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" style="color:var(--green)" id="statLow">—</span>
+      <div class="stat-label">Low Risk</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="statRevoked">0</span>
+      <div class="stat-label">Revoked Today</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-header">
+    <div class="section-title">Guest User Audit</div>
+    <button class="btn-audit" id="btnAudit" onclick="runAudit()">
+      🔍 Run Audit
+    </button>
+  </div>
+
+  <div class="loading-state" id="loadingState">
+    <div class="spinner"></div>
+    <div class="loading-steps">
+      <div class="loading-step" id="step1"><span class="step-icon">→</span> Connecting to Azure Logic App...</div>
+      <div class="loading-step" id="step2"><span class="step-icon">→</span> Querying Microsoft Graph API...</div>
+      <div class="loading-step" id="step3"><span class="step-icon">→</span> Filtering guest accounts...</div>
+      <div class="loading-step" id="step4"><span class="step-icon">→</span> Calculating risk scores...</div>
+      <div class="loading-step" id="step5"><span class="step-icon">→</span> Generating governance report...</div>
+    </div>
+  </div>
+
+  <div class="guests-grid" id="guestsGrid"></div>
+
+  <div class="report-section" id="reportSection">
+    <div class="section-header" style="margin-top:2rem">
+      <div class="section-title">Governance Report</div>
+    </div>
+    <div class="report-card">
+      <div class="report-header">
+        <div class="report-title">📋 Guest Access Review — <span id="reportDate"></span></div>
+        <span style="font-size:0.72rem;font-family:var(--font-mono);color:var(--text-muted)">Messacanyon Tenant</span>
+      </div>
+      <div class="report-body">
+        <div class="report-grid" id="reportGrid"></div>
+        <table class="report-table" id="reportTable">
+          <thead>
+            <tr>
+              <th>Display Name</th>
+              <th>Identity</th>
+              <th>Invited</th>
+              <th>Last Sign-In</th>
+              <th>Risk Level</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="reportBody"></tbody>
+        </table>
+        <button class="btn-download" onclick="downloadReport()">⬇ Download CSV Report</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="arch-note">
+    <div class="arch-note-title">🏗 Architecture</div>
+    <div class="arch-flow">
+      <div class="arch-node">Demo Page</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">guest-access-audit (Logic App)</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">Graph API /users?filter=Guest</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">Entra ID</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">Risk Score Engine (JS)</div>
+    </div>
+    <div class="arch-flow" style="margin-top:0.5rem">
+      <div class="arch-node">Revoke Button</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">guest-access-revoke (Logic App)</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">Graph API DELETE /users/{id}</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">Guest Removed</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  const AUDIT_URL = 'https://prod-12.eastus2.logic.azure.com:443/workflows/77604e3366a94c1982d525d93d940e31/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=SGG7yEnT8tMLHnJlMCLx9Gr1SJiiRdrlK3i60sZl7Rc';
+  const REVOKE_URL = 'https://prod-06.eastus2.logic.azure.com:443/workflows/5308f44f49f945799c31f2ae0963fca2/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=JddptBnP86AfcLV3443MCg-OV-atQtqJH_pQhrWSQKo';
+
+  let guestData = [];
+  let revokedCount = 0;
+
+  const AVATAR_COLORS = [
+    'linear-gradient(135deg,#0ea5e9,#6366f1)',
+    'linear-gradient(135deg,#f59e0b,#ef4444)',
+    'linear-gradient(135deg,#10b981,#0ea5e9)',
+    'linear-gradient(135deg,#8b5cf6,#ec4899)',
+  ];
+
+  function getInitials(name) {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  }
+
+  function calcRisk(user) {
+    const created = user.createdDateTime ? new Date(user.createdDateTime) : null;
+    const lastSignIn = user.signInActivity?.lastSignInDateTime
+      ? new Date(user.signInActivity.lastSignInDateTime)
+      : null;
+    const now = new Date();
+
+    if (!lastSignIn) {
+      const daysSinceCreated = created ? Math.floor((now - created) / 86400000) : 999;
+      if (daysSinceCreated > 7) return { level: 'HIGH', label: '🔴 High Risk', days: null, reason: 'Never signed in' };
+      return { level: 'MEDIUM', label: '🟡 Medium Risk', days: null, reason: 'Newly invited, no sign-in yet' };
+    }
+
+    const days = Math.floor((now - lastSignIn) / 86400000);
+    if (days >= 90) return { level: 'HIGH', label: '🔴 High Risk', days, reason: `Inactive ${days} days` };
+    if (days >= 30) return { level: 'MEDIUM', label: '🟡 Medium Risk', days, reason: `Inactive ${days} days` };
+    return { level: 'LOW', label: '🟢 Low Risk', days, reason: `Active ${days} days ago` };
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return 'Never';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function showToast(icon, msg, duration = 3000) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+
+  async function runAudit() {
+    const btn = document.getElementById('btnAudit');
+    const loading = document.getElementById('loadingState');
+    const grid = document.getElementById('guestsGrid');
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Auditing...';
+    grid.innerHTML = '';
+    document.getElementById('reportSection').classList.remove('active');
+    loading.classList.add('active');
+
+    // animate steps
+    const steps = ['step1','step2','step3','step4','step5'];
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(r => setTimeout(r, 600));
+      document.getElementById(steps[i]).classList.add('show');
+    }
+
+    try {
+      const res = await fetch(AUDIT_URL, { method: 'GET' });
+      if (!res.ok) throw new Error('Logic App returned ' + res.status);
+      const data = await res.json();
+
+      const users = data.value || [];
+      guestData = users;
+
+      loading.classList.remove('active');
+      steps.forEach(s => document.getElementById(s).classList.remove('show'));
+
+      if (users.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><p>No guest users found in the tenant.<br>Invite external users to see governance data.</p></div>`;
+        return;
+      }
+
+      renderGuests(users);
+      renderReport(users);
+      updateStats(users);
+
+      if (window.appInsights && window.appInsights.trackEvent) {
+        window.appInsights.trackEvent({ name: 'GuestAuditRun', properties: { guestCount: users.length } });
+      }
+
+      showToast('✅', `Audit complete — ${users.length} guest user${users.length !== 1 ? 's' : ''} found`);
+
+    } catch (err) {
+      loading.classList.remove('active');
+      grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Unable to connect to Azure Logic App.<br><small style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted)">${err.message}</small></p></div>`;
+      showToast('❌', 'Audit failed — check console for details');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔄 Re-run Audit';
+    }
+  }
+
+  function renderGuests(users) {
+    const grid = document.getElementById('guestsGrid');
+    grid.innerHTML = '';
+
+    users.forEach((user, i) => {
+      const risk = calcRisk(user);
+      const riskClass = risk.level === 'HIGH' ? 'risk-high' : risk.level === 'MEDIUM' ? 'risk-medium' : 'risk-low';
+      const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+      const email = user.mail || user.userPrincipalName || 'Unknown';
+
+      const card = document.createElement('div');
+      card.className = 'guest-card';
+      card.id = 'card-' + user.id;
+      card.innerHTML = `
+        <div class="guest-avatar" style="background:${color}">${getInitials(user.displayName || 'U')}</div>
+        <div class="guest-info">
+          <div class="guest-name">${user.displayName || 'Unknown User'}</div>
+          <div class="guest-email">${email}</div>
+          <div class="guest-meta">
+            <div class="meta-chip">👤 Guest</div>
+            <div class="meta-chip">📅 Invited: ${formatDate(user.createdDateTime)}</div>
+            <div class="meta-chip">🕐 Last sign-in: ${formatDate(user.signInActivity?.lastSignInDateTime)}</div>
+            <div class="meta-chip" style="color:var(--accent2)">ℹ️ ${risk.reason}</div>
+          </div>
+        </div>
+        <div class="guest-actions">
+          <span class="risk-badge ${riskClass}">${risk.label}</span>
+          <button class="btn-revoke" id="revoke-${user.id}" >
+            🚫 Revoke Access
+          </button>
+        </div>
+      `;
+
+      grid.appendChild(card);
+      setTimeout(() => card.classList.add('show'), 50 + i * 100);
+    });
+  }
+
+  function updateStats(users) {
+    const risks = users.map(calcRisk);
+    document.getElementById('statTotal').textContent = users.length;
+    document.getElementById('statHigh').textContent = risks.filter(r => r.level === 'HIGH').length;
+    document.getElementById('statMed').textContent = risks.filter(r => r.level === 'MEDIUM').length;
+    document.getElementById('statLow').textContent = risks.filter(r => r.level === 'LOW').length;
+  }
+
+  async function revokeGuest(userId, displayName) {
+    const btn = document.getElementById('revoke-' + userId);
+    const card = document.getElementById('card-' + userId);
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Revoking...';
+    card.classList.add('revoking');
+
+    try {
+      const res = await fetch(REVOKE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, displayName })
+      });
+
+      if (!res.ok) throw new Error('Revoke returned ' + res.status);
+
+      card.classList.remove('revoking');
+      card.classList.add('revoked');
+
+      const actionsDiv = card.querySelector('.guest-actions');
+      actionsDiv.innerHTML = `
+        <span class="risk-badge" style="background:rgba(100,116,139,0.1);color:var(--text-muted);border-color:var(--border)">⬛ Revoked</span>
+        <span class="revoked-badge">✅ Access removed</span>
+      `;
+
+      revokedCount++;
+      document.getElementById('statRevoked').textContent = revokedCount;
+
+      // update report table
+      const row = document.getElementById('report-row-' + userId);
+      if (row) {
+        const statusCell = row.querySelector('.status-cell');
+        if (statusCell) statusCell.innerHTML = '<span style="color:var(--red)">● Revoked</span>';
+      }
+
+      if (window.appInsights && window.appInsights.trackEvent) {
+        window.appInsights.trackEvent({ name: 'GuestAccessRevoked', properties: { displayName } });
+      }
+
+      showToast('🚫', `Access revoked for ${displayName}`);
+
+    } catch (err) {
+      card.classList.remove('revoking');
+      btn.disabled = false;
+      btn.textContent = '🚫 Revoke Access';
+      showToast('❌', `Failed to revoke access for ${displayName}`);
+    }
+  }
+
+  function renderReport(users) {
+    const section = document.getElementById('reportSection');
+    const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById('reportDate').textContent = date;
+
+    const risks = users.map(calcRisk);
+    const high = risks.filter(r => r.level === 'HIGH').length;
+    const medium = risks.filter(r => r.level === 'MEDIUM').length;
+    const low = risks.filter(r => r.level === 'LOW').length;
+
+    document.getElementById('reportGrid').innerHTML = `
+      <div class="report-stat">
+        <span class="report-stat-num" style="color:var(--red)">${high}</span>
+        <div class="report-stat-label">High Risk</div>
+      </div>
+      <div class="report-stat">
+        <span class="report-stat-num" style="color:var(--yellow)">${medium}</span>
+        <div class="report-stat-label">Medium Risk</div>
+      </div>
+      <div class="report-stat">
+        <span class="report-stat-num" style="color:var(--green)">${low}</span>
+        <div class="report-stat-label">Low Risk</div>
+      </div>
+    `;
+
+    const tbody = document.getElementById('reportBody');
+    tbody.innerHTML = '';
+    users.forEach((user, i) => {
+      const risk = risks[i];
+      const riskColor = risk.level === 'HIGH' ? 'var(--red)' : risk.level === 'MEDIUM' ? 'var(--yellow)' : 'var(--green)';
+      const tr = document.createElement('tr');
+      tr.id = 'report-row-' + user.id;
+      tr.innerHTML = `
+        <td>${user.displayName || '—'}</td>
+        <td>${(user.mail || user.userPrincipalName || '—').split('#')[0]}</td>
+        <td>${formatDate(user.createdDateTime)}</td>
+        <td>${formatDate(user.signInActivity?.lastSignInDateTime)}</td>
+        <td style="color:${riskColor}">${risk.label}</td>
+        <td class="status-cell"><span style="color:var(--green)">● Active</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    section.classList.add('active');
+  }
+
+  function downloadReport() {
+    if (!guestData.length) return;
+    const rows = [['Display Name','Email','Invited','Last Sign-In','Risk Level','Status']];
+    guestData.forEach(user => {
+      const risk = calcRisk(user);
+      const statusCell = document.getElementById('report-row-' + user.id)?.querySelector('.status-cell');
+      const status = statusCell?.textContent?.includes('Revoked') ? 'Revoked' : 'Active';
+      rows.push([
+        user.displayName || '',
+        (user.mail || user.userPrincipalName || '').split('#')[0],
+        formatDate(user.createdDateTime),
+        formatDate(user.signInActivity?.lastSignInDateTime),
+        risk.label.replace(/[🔴🟡🟢]/g,'').trim(),
+        status
+      ]);
+    });
+    const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `guest-governance-report-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    showToast('📥', 'CSV report downloaded!');
+  }
+
+  // Event delegation for revoke buttons — avoids inline onclick special char issues
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-revoke');
+    if (btn && !btn.disabled) {
+      const uid = btn.getAttribute('data-uid');
+      const name = btn.getAttribute('data-name');
+      if (uid && name) revokeGuest(uid, name);
+    }
+  });
+</script>
+</body>
+</html>

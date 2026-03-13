@@ -47,6 +47,32 @@
     .page { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
 
     /* BACK LINK */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2rem;
+      background: rgba(8,12,18,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      margin: -2rem -2rem 0 -2rem;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.8rem; color: #000;
+    }
+    .nav-role { font-size: 0.82rem; font-weight: 500; color: var(--text); }
+    .nav-back-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--accent); text-decoration: none;
+      font-size: 0.82rem; font-weight: 600;
+      transition: gap 0.2s;
+    }
+    .nav-back-btn:hover { gap: 0.75rem; }
+
     .back-link {
       display: inline-flex; align-items: center; gap: 0.5rem;
       color: var(--muted); text-decoration: none;
@@ -366,9 +392,14 @@
   </style>
 </head>
 <body>
+<nav>
+  <a href="/" class="nav-brand">
+    <div class="nav-logo">FR</div>
+    <div class="nav-role">M365 Architect</div>
+  </a>
+  <a href="/" class="nav-back-btn">← Back to Portfolio</a>
+</nav>
 <div class="page">
-
-  <a href="index.html" class="back-link">← Back to Portfolio</a>
 
   <div class="header">
     <div class="header-tag">Live Demo — Azure Logic Apps</div>

@@ -405,6 +405,52 @@
       .metrics-grid { grid-template-columns: 1fr; }
       .hero, .main, .score-section { padding-left: 1rem; padding-right: 1rem; }
     }
+
+    /* HOW IT WORKS */
+    .what-happens {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .what-happens h3 {
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .flow-steps {
+      display: flex; align-items: center;
+      flex-wrap: wrap; gap: 0.5rem;
+    }
+    .flow-step {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.72rem; color: var(--text-dim);
+    }
+    .flow-arrow { color: var(--accent); font-size: 0.8rem; }
+
+    /* TECH STACK */
+    .tech-stack {
+      margin-top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem 2rem;
+    }
+    .tech-stack h3 {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .tech-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tech-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim); padding: 0.35rem 0.75rem;
+      border-radius: 4px; font-size: 0.7rem;
+    }
   </style>
 </head>
 <body>
@@ -456,6 +502,21 @@
 </div>
 
 <div class="main">
+  <div class="what-happens">
+    <h3>How it works</h3>
+    <div class="flow-steps">
+      <div class="flow-step">⚡ Click Run Scan</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">🔀 4 Graph API calls (parallel)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">📊 6 pillars scored</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">🛡️ Posture score calculated</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">📋 Recommendations surfaced</div>
+    </div>
+  </div>
+
   <!-- LOADING -->
   <div class="loading-bar" id="loadingBar">
     <div class="loading-label" id="loadingLabel">// INITIALIZING SECURITY SCAN...</div>
@@ -484,18 +545,18 @@
     </div>
   </div>
 
-  <div class="arch-note">
-    <div class="arch-note-title">// Architecture</div>
-    <div class="arch-flow">
-      <div class="arch-node">Demo Page</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">zero-trust-dashboard (Logic App)</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">4x Graph API calls (parallel)</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">Risk Score Engine</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">Live Dashboard</div>
+  <div class="tech-stack">
+    <h3>Tech Stack</h3>
+    <div class="tech-tags">
+      <span class="tech-tag">Azure Logic Apps</span>
+      <span class="tech-tag">Microsoft Graph API</span>
+      <span class="tech-tag">Microsoft Entra ID</span>
+      <span class="tech-tag">Azure App Registration</span>
+      <span class="tech-tag">OAuth 2.0 / Client Credentials</span>
+      <span class="tech-tag">Policy.Read.All</span>
+      <span class="tech-tag">Reports.Read.All</span>
+      <span class="tech-tag">RoleManagement.Read.All</span>
+      <span class="tech-tag">AuditLog.Read.All</span>
     </div>
   </div>
 </div>

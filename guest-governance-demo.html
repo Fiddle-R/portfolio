@@ -116,18 +116,7 @@
       margin-bottom: 2rem;
     }
 
-    /* ARCH PILLS */
-    .arch-pills {
-      display: flex; flex-wrap: wrap; gap: 0.5rem;
-      margin-bottom: 2.5rem;
-    }
-    .arch-pill {
-      display: flex; align-items: center; gap: 0.4rem;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--text-dim); padding: 0.4rem 0.85rem;
-      border-radius: 6px; font-size: 0.75rem; font-family: var(--font-mono);
-    }
-    .arch-pill span { color: var(--accent); }
+
 
     /* STATS BAR */
     .stats-bar {
@@ -435,6 +424,52 @@
       .main { padding: 0 1rem 3rem; }
       nav { padding: 1rem; }
     }
+
+    /* HOW IT WORKS */
+    .what-happens {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .what-happens h3 {
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .flow-steps {
+      display: flex; align-items: center;
+      flex-wrap: wrap; gap: 0.5rem;
+    }
+    .flow-step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.72rem; color: var(--text-muted);
+    }
+    .flow-arrow { color: var(--accent); font-size: 0.8rem; }
+
+    /* TECH STACK */
+    .tech-stack {
+      margin-top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem 2rem;
+    }
+    .tech-stack h3 {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .tech-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tech-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted); padding: 0.35rem 0.75rem;
+      border-radius: 4px; font-size: 0.7rem;
+    }
   </style>
 </head>
 <body>
@@ -463,13 +498,7 @@
     activity, and enables one-click access revocation — all orchestrated through 
     Azure Logic Apps.
   </p>
-  <div class="arch-pills">
-    <div class="arch-pill"><span>⚡</span> Azure Logic Apps</div>
-    <div class="arch-pill"><span>🔗</span> Microsoft Graph API</div>
-    <div class="arch-pill"><span>🛡️</span> Microsoft Entra ID</div>
-    <div class="arch-pill"><span>🔍</span> AuditLog.Read.All</div>
-    <div class="arch-pill"><span>👥</span> User.ReadWrite.All</div>
-  </div>
+
 
   <div class="stats-bar" id="statsBar">
     <div class="stat-item">
@@ -496,6 +525,22 @@
 </div>
 
 <div class="main">
+
+  <div class="what-happens">
+    <h3>How it works</h3>
+    <div class="flow-steps">
+      <div class="flow-step">🔍 Click Run Audit</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">⚡ Logic App triggers</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">🔗 Graph API queries guests</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">⚠️ Risk scores calculated</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">🚫 Revoke access live</div>
+    </div>
+  </div>
+
   <div class="section-header">
     <div class="section-title">Guest User Audit</div>
     <button class="btn-audit" id="btnAudit" onclick="runAudit()">
@@ -545,30 +590,19 @@
     </div>
   </div>
 
-  <div class="arch-note">
-    <div class="arch-note-title">🏗 Architecture</div>
-    <div class="arch-flow">
-      <div class="arch-node">Demo Page</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">guest-access-audit (Logic App)</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">Graph API /users?filter=Guest</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">Entra ID</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">Risk Score Engine (JS)</div>
-    </div>
-    <div class="arch-flow" style="margin-top:0.5rem">
-      <div class="arch-node">Revoke Button</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">guest-access-revoke (Logic App)</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">Graph API DELETE /users/{id}</div>
-      <span class="arch-arrow">→</span>
-      <div class="arch-node">Guest Removed</div>
+  <div class="tech-stack">
+    <h3>Tech Stack</h3>
+    <div class="tech-tags">
+      <span class="tech-tag">Azure Logic Apps</span>
+      <span class="tech-tag">Microsoft Graph API</span>
+      <span class="tech-tag">Microsoft Entra ID</span>
+      <span class="tech-tag">Azure App Registration</span>
+      <span class="tech-tag">OAuth 2.0 / Client Credentials</span>
+      <span class="tech-tag">AuditLog.Read.All</span>
+      <span class="tech-tag">User.ReadWrite.All</span>
+      <span class="tech-tag">REST API</span>
     </div>
   </div>
-</div>
 
 <div class="toast" id="toast">
   <span class="toast-icon" id="toastIcon"></span>

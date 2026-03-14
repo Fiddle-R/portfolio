@@ -56,13 +56,13 @@
       border-bottom: 1px solid var(--border);
     }
     .nav-logo {
-      font-family: var(--font-head);
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: var(--accent);
-      letter-spacing: -0.02em;
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: white;
+      text-decoration: none; flex-shrink: 0;
     }
-    .nav-logo span { color: var(--text); }
     .nav-links { display: flex; gap: 2.5rem; list-style: none; }
     .nav-links a {
       color: var(--muted);
@@ -629,7 +629,10 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">FR<span>.</span></div>
+  <div style="display:flex;align-items:center;gap:0.75rem">
+    <div class="nav-logo">FR</div>
+    <span style="font-size:0.82rem;font-weight:500;color:var(--text)">M365 Architect</span>
+  </div>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
@@ -969,20 +972,21 @@
       <a href="/zero-trust-dashboard.html" class="demo-card-btn">⚡ Launch Demo →</a>
     </div>
 
-    <div class="demo-card demo-card-soon">
+    <div class="demo-card">
       <div class="demo-card-header">
-        <div class="demo-icon">📊</div>
-        <div class="demo-coming-badge">COMING SOON</div>
+        <div class="demo-icon">🤖</div>
+        <div class="demo-live-badge">● LIVE ON AZURE</div>
       </div>
-      <div class="demo-card-title">M365 License Optimizer</div>
+      <div class="demo-card-title">Copilot Readiness Assessment</div>
       <p class="demo-card-desc">
-        Upload a sample license report and receive optimization recommendations — identifying unused licenses, rightsizing opportunities, and potential cost savings across your M365 tenant.
+        A live assessment that queries your Entra ID tenant via Graph API and scores five critical Copilot readiness pillars — delivering a deploy/no-deploy decision backed by real data.
       </p>
       <div class="demo-card-tags">
-        <span class="project-tag">License Management</span>
-        <span class="project-tag">Cost Optimization</span>
+        <span class="project-tag">M365 Copilot</span>
         <span class="project-tag">Graph API</span>
+        <span class="project-tag">Entra ID</span>
       </div>
+      <a href="/copilot-readiness.html" class="demo-card-btn">⚡ Launch Demo →</a>
     </div>
 
   </div>
@@ -1039,8 +1043,8 @@
     Open to architecture-focused M365 / Azure roles, consulting engagements, and technical conversations.
   </p>
   <div class="contact-links">
-    <a href="/cdn-cgi/l/email-protection#d7b1beb3b3bbb2e5a597b8a2a3bbb8b8bcf9b4b8ba" class="contact-link">
-      <span>📧</span> <span class="__cf_email__" data-cfemail="385e515c5c545d0a4a78574d4c54575753165b5755">[email&#160;protected]</span>
+    <a href="#" class="contact-link" id="emailBtn" onclick="handleEmail(event)">
+      <span>📧</span> <span>Send Email</span>
     </a>
     <a href="https://www.linkedin.com/in/fiddle-reynoso-835b318" target="_blank" class="contact-link">
       <span>💼</span> LinkedIn
@@ -1058,6 +1062,12 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Email handler - split to avoid Cloudflare obfuscation
+  function handleEmail(e) {
+    e.preventDefault();
+    window.location.href = 'mai' + 'lto:fid' + 'dle2r@' + 'outlook.com';
+  }
+
   // Scroll-triggered fade-in
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {

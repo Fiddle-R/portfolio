@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copilot Readiness Assessment | Fiddle Reynoso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="/analytics.js"></script>
+  <style>
+    :root {
+      --bg: #080c12;
+      --bg2: #0d1320;
+      --bg3: #111927;
+      --border: rgba(99,102,241,0.15);
+      --border2: rgba(99,102,241,0.25);
+      --accent: #818cf8;
+      --accent2: #6366f1;
+      --accent-glow: rgba(99,102,241,0.2);
+      --copilot: #a78bfa;
+      --text: #e8edf5;
+      --muted: #7a8a9e;
+      --dim: #4a5568;
+      --green: #34d399;
+      --green-soft: rgba(52,211,153,0.1);
+      --yellow: #fbbf24;
+      --yellow-soft: rgba(251,191,36,0.1);
+      --red: #f87171;
+      --red-soft: rgba(248,113,113,0.1);
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --font-body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* Copilot glow orb */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2rem;
+      background: rgba(8,12,18,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #818cf8, #6366f1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.8rem; color: white;
+    }
+    .nav-role { font-size: 0.82rem; font-weight: 500; color: var(--text); }
+    .nav-back {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--accent); text-decoration: none;
+      font-size: 0.82rem; font-weight: 600;
+      transition: gap 0.2s;
+    }
+    .nav-back:hover { gap: 0.75rem; }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      padding: 3rem 2rem 2rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--border2);
+      background: var(--accent-glow);
+      color: var(--accent); padding: 0.3rem 0.85rem;
+      border-radius: 999px; font-size: 0.72rem; font-weight: 600;
+      font-family: var(--font-mono); margin-bottom: 1.5rem;
+      letter-spacing: 0.06em;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--green); border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero h1 {
+      font-size: clamp(1.85rem, 4.5vw, 3rem);
+      font-weight: 800; line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 .copilot-word {
+      background: linear-gradient(135deg, #818cf8, #a78bfa, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-family: var(--font-body);
+      color: var(--muted); font-size: 0.95rem;
+      max-width: 600px; line-height: 1.75;
+      margin-bottom: 2rem;
+    }
+
+    /* HOW IT WORKS */
+    .what-happens {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .what-happens h3 {
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .flow-steps {
+      display: flex; align-items: center;
+      flex-wrap: wrap; gap: 0.5rem;
+    }
+    .flow-step {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.72rem; color: var(--muted);
+    }
+    .flow-arrow { color: var(--accent); font-size: 0.8rem; }
+
+    /* MAIN */
+    .main {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* SCAN BUTTON */
+    .btn-assess {
+      display: inline-flex; align-items: center; gap: 0.65rem;
+      background: linear-gradient(135deg, var(--accent2), var(--copilot));
+      color: white; border: none; cursor: pointer;
+      padding: 0.85rem 2rem; border-radius: 8px;
+      font-family: var(--font-main); font-weight: 700; font-size: 0.9rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 24px rgba(99,102,241,0.35);
+      margin-bottom: 2.5rem;
+    }
+    .btn-assess:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(99,102,241,0.45); }
+    .btn-assess:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* LOADING */
+    .loading-wrap {
+      display: none;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      margin-bottom: 2rem; text-align: center;
+    }
+    .loading-wrap.active { display: block; }
+    .copilot-spinner {
+      width: 48px; height: 48px; margin: 0 auto 1.25rem;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-right-color: var(--copilot);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-label {
+      font-family: var(--font-mono); font-size: 0.78rem;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+    .loading-steps {
+      display: flex; flex-wrap: wrap; gap: 0.75rem;
+      justify-content: center; margin-top: 1rem;
+    }
+    .lstep {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      color: var(--dim); display: flex; align-items: center; gap: 0.4rem;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .lstep.active { color: var(--accent); opacity: 1; }
+    .lstep.done { color: var(--green); opacity: 1; }
+
+    /* READINESS SCORE */
+    .score-banner {
+      display: none;
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 16px; padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative; overflow: hidden;
+    }
+    .score-banner.show { display: block; }
+    .score-banner::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent2), var(--copilot), #c084fc);
+    }
+    .score-inner {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 2rem; align-items: center;
+    }
+    .score-ring-wrap { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+    .score-svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+    .score-track { fill: none; stroke: var(--bg3); stroke-width: 10; }
+    .score-fill {
+      fill: none; stroke-width: 10; stroke-linecap: round;
+      stroke-dasharray: 377; stroke-dashoffset: 377;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .score-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .score-num {
+      font-family: var(--font-main); font-size: 2rem; font-weight: 800; line-height: 1;
+    }
+    .score-denom { font-size: 0.65rem; color: var(--muted); margin-top: 0.1rem; }
+    .score-verdict { font-size: 0.7rem; font-weight: 700; margin-top: 0.15rem; font-family: var(--font-mono); }
+
+    .score-info { min-width: 0; }
+    .score-title {
+      font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem;
+    }
+    .score-desc {
+      font-family: var(--font-body); color: var(--muted);
+      font-size: 0.85rem; line-height: 1.65; margin-bottom: 1rem;
+    }
+    .score-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .score-chip {
+      display: flex; align-items: center; gap: 0.35rem;
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 0.25rem 0.65rem; border-radius: 4px;
+      font-size: 0.68rem; font-family: var(--font-mono); color: var(--muted);
+    }
+    .chip-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+    .deploy-decision {
+      text-align: center; flex-shrink: 0;
+    }
+    .deploy-badge {
+      display: inline-flex; flex-direction: column;
+      align-items: center; gap: 0.4rem;
+      padding: 1.25rem 1.5rem; border-radius: 12px;
+      border: 2px solid;
+    }
+    .deploy-badge.ready { border-color: var(--green); background: var(--green-soft); }
+    .deploy-badge.conditional { border-color: var(--yellow); background: var(--yellow-soft); }
+    .deploy-badge.not-ready { border-color: var(--red); background: var(--red-soft); }
+    .deploy-icon { font-size: 1.75rem; }
+    .deploy-label {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .deploy-badge.ready .deploy-label { color: var(--green); }
+    .deploy-badge.conditional .deploy-label { color: var(--yellow); }
+    .deploy-badge.not-ready .deploy-label { color: var(--red); }
+
+    /* PILLARS */
+    .pillars-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .section-label {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-label::before { content:''; display:block; width:16px; height:2px; background:var(--accent); }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin-bottom: 2rem;
+    }
+
+    .pillar-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.35rem;
+      position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(10px);
+      transition: all 0.4s;
+    }
+    .pillar-card.show { opacity: 1; transform: translateY(0); }
+    .pillar-card::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 3px;
+    }
+    .pillar-card.ready::after { background: var(--green); }
+    .pillar-card.conditional::after { background: var(--yellow); }
+    .pillar-card.not-ready::after { background: var(--red); }
+
+    .pillar-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+    .pillar-icon { font-size: 1.35rem; }
+    .pillar-score-badge {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
+      padding: 0.2rem 0.55rem; border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .ready .pillar-score-badge { background: var(--green-soft); color: var(--green); }
+    .conditional .pillar-score-badge { background: var(--yellow-soft); color: var(--yellow); }
+    .not-ready .pillar-score-badge { background: var(--red-soft); color: var(--red); }
+
+    .pillar-name {
+      font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem;
+    }
+    .pillar-value {
+      font-family: var(--font-main); font-size: 1.6rem; font-weight: 800;
+      line-height: 1; margin-bottom: 0.3rem;
+    }
+    .pillar-desc {
+      font-family: var(--font-body); font-size: 0.72rem;
+      color: var(--muted); line-height: 1.5;
+    }
+    .pillar-bar-wrap {
+      margin-top: 0.85rem; height: 3px;
+      background: var(--bg3); border-radius: 99px; overflow: hidden;
+    }
+    .pillar-bar {
+      height: 100%; width: 0; border-radius: 99px;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1) 0.2s;
+    }
+    .ready .pillar-bar { background: var(--green); }
+    .conditional .pillar-bar { background: var(--yellow); }
+    .not-ready .pillar-bar { background: var(--red); }
+
+    /* RECOMMENDATIONS */
+    .recs-title {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted);
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .recs-title::before { content:''; display:block; width:16px; height:2px; background:var(--accent); }
+    .recs-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+    .rec-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.9rem 1rem;
+      font-size: 0.8rem; color: var(--muted); line-height: 1.55;
+      opacity: 0; transform: translateX(-6px); transition: all 0.35s;
+    }
+    .rec-item.show { opacity: 1; transform: translateX(0); }
+    .rec-tag {
+      font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
+      padding: 0.15rem 0.5rem; border-radius: 3px; flex-shrink: 0; margin-top: 0.1rem;
+    }
+    .rec-blocker { background: var(--red-soft); color: var(--red); }
+    .rec-required { background: var(--yellow-soft); color: var(--yellow); }
+    .rec-recommended { background: var(--accent-glow); color: var(--accent); }
+
+    /* TECH STACK */
+    .tech-stack {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem 2rem;
+    }
+    .tech-stack h3 {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .tech-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tech-tag {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); padding: 0.35rem 0.75rem;
+      border-radius: 4px; font-size: 0.7rem;
+    }
+
+    /* EMPTY */
+    .empty-state {
+      text-align: center; padding: 4rem 2rem;
+      color: var(--muted); border: 1px dashed var(--border);
+      border-radius: 12px; margin-bottom: 2rem;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.9rem 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.82rem; max-width: 300px;
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.3s; z-index: 999;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 768px) {
+      .pillars-grid { grid-template-columns: 1fr; }
+      .score-inner { grid-template-columns: 1fr; text-align: center; }
+      .score-ring-wrap { margin: 0 auto; }
+      .hero, .main { padding-left: 1rem; padding-right: 1rem; }
+      nav { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <div class="nav-logo">FR</div>
+    <div class="nav-role">M365 Architect</div>
+  </a>
+  <a href="/" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">
+    <span class="live-dot"></span>
+    LIVE ON AZURE · DEMO 4 of 4
+  </div>
+  <h1>Microsoft 365<br><span class="copilot-word">Copilot Readiness</span><br>Assessment</h1>
+  <p>
+    Before deploying Copilot to your organization, is your tenant actually ready?
+    This live assessment queries your Entra ID environment via Graph API and scores
+    five critical readiness pillars — identity security, data governance, access controls,
+    user adoption foundation, and licensing posture.
+  </p>
+  <button class="btn-assess" id="btnAssess" onclick="runAssessment()">
+    🤖 Run Copilot Readiness Assessment
+  </button>
+
+  <div class="what-happens">
+    <h3>How it works</h3>
+    <div class="flow-steps">
+      <div class="flow-step">🤖 Click Run Assessment</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">⚡ Logic App fires</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">🔀 5 Graph API calls (parallel)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">📊 5 pillars scored</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">✅ Deploy decision rendered</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LOADING -->
+  <div class="loading-wrap" id="loadingWrap">
+    <div class="copilot-spinner"></div>
+    <div class="loading-label" id="loadingLabel">// INITIALIZING COPILOT READINESS ASSESSMENT...</div>
+    <div class="loading-steps">
+      <div class="lstep" id="ls1">→ Checking MFA coverage</div>
+      <div class="lstep" id="ls2">→ Auditing CA policies</div>
+      <div class="lstep" id="ls3">→ Scanning sensitivity labels</div>
+      <div class="lstep" id="ls4">→ Analyzing user base</div>
+      <div class="lstep" id="ls5">→ Calculating readiness score</div>
+    </div>
+  </div>
+
+  <!-- SCORE BANNER -->
+  <div class="score-banner" id="scoreBanner">
+    <div class="score-inner">
+      <div class="score-ring-wrap">
+        <svg class="score-svg" viewBox="0 0 140 140">
+          <circle class="score-track" cx="70" cy="70" r="60"/>
+          <circle class="score-fill" id="scoreRing" cx="70" cy="70" r="60"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-num" id="scoreNum">0</div>
+          <div class="score-denom">/ 100</div>
+          <div class="score-verdict" id="scoreVerdict"></div>
+        </div>
+      </div>
+      <div class="score-info">
+        <div class="score-title">Copilot Readiness Score</div>
+        <div class="score-desc" id="scoreDesc"></div>
+        <div class="score-chips" id="scoreChips"></div>
+      </div>
+      <div class="deploy-decision">
+        <div class="deploy-badge" id="deployBadge">
+          <div class="deploy-icon" id="deployIcon"></div>
+          <div class="deploy-label" id="deployLabel"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLARS -->
+  <div id="pillarsWrap" style="display:none">
+    <div class="pillars-header">
+      <div class="section-label">Readiness Pillars</div>
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted)" id="scanTime"></div>
+    </div>
+    <div class="pillars-grid" id="pillarsGrid"></div>
+
+    <div class="recs-title">Remediation Roadmap</div>
+    <div class="recs-list" id="recsList"></div>
+  </div>
+
+  <!-- TECH STACK -->
+  <div class="tech-stack">
+    <h3>Tech Stack</h3>
+    <div class="tech-tags">
+      <span class="tech-tag">Azure Logic Apps</span>
+      <span class="tech-tag">Microsoft Graph API</span>
+      <span class="tech-tag">Microsoft Entra ID</span>
+      <span class="tech-tag">Azure App Registration</span>
+      <span class="tech-tag">OAuth 2.0 / Client Credentials</span>
+      <span class="tech-tag">Microsoft 365 Copilot</span>
+      <span class="tech-tag">InformationProtection.Read.All</span>
+      <span class="tech-tag">Reports.Read.All</span>
+      <span class="tech-tag">Policy.Read.All</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  const LOGIC_APP_URL = 'https://prod-59.eastus2.logic.azure.com:443/workflows/a7d2d6f51e2b4872971f0d30fdf177fc/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=AL5uBAYIN-EPpZlKOdABIsE4PD7uzbtK6p_QAQSz53A';
+
+  function showToast(icon, msg, dur = 3500) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  async function animateLoading() {
+    const steps = ['ls1','ls2','ls3','ls4','ls5'];
+    const labels = [
+      '// CHECKING MFA & IDENTITY SECURITY...',
+      '// AUDITING CONDITIONAL ACCESS POLICIES...',
+      '// SCANNING DATA GOVERNANCE POSTURE...',
+      '// ANALYZING USER BASE & LICENSES...',
+      '// CALCULATING COPILOT READINESS SCORE...'
+    ];
+    for (let i = 0; i < steps.length; i++) {
+      document.getElementById(steps[i]).className = 'lstep active';
+      document.getElementById('loadingLabel').textContent = labels[i];
+      if (i > 0) document.getElementById(steps[i-1]).className = 'lstep done';
+      await new Promise(r => setTimeout(r, 700));
+    }
+  }
+
+  function calcPillars(data) {
+    const mfaData = data.mfaData?.value || [];
+    const caPolicies = data.caPolicies?.value || [];
+    const labels = data.sensitivityLabels?.value || [];
+    const users = data.users?.value || [];
+    const now = new Date();
+
+    const members = users.filter(u => u.userType !== 'Guest' && u.accountEnabled);
+    const guests = users.filter(u => u.userType === 'Guest');
+    const licensed = members.filter(u => u.assignedLicenses?.length > 0);
+
+    // PILLAR 1: Identity Security (MFA + CA)
+    const mfaReg = mfaData.filter(u => u.isMfaRegistered || u.methodsRegistered?.length > 0).length;
+    const mfaTotal = mfaData.length || members.length || 1;
+    const mfaPct = Math.round((mfaReg / mfaTotal) * 100);
+    const caEnabled = caPolicies.filter(p => p.state === 'enabled').length;
+    const identityScore = Math.round((mfaPct * 0.6) + (Math.min(caEnabled / 3, 1) * 100 * 0.4));
+
+    // PILLAR 2: Data Governance (Sensitivity Labels)
+    const labelCount = labels.length;
+    const dataScore = labelCount >= 5 ? 100 : labelCount >= 3 ? 75 : labelCount >= 1 ? 45 : 10;
+
+    // PILLAR 3: Access Controls (Guest + Admin exposure)
+    const stale = members.filter(u => {
+      const last = u.signInActivity?.lastSignInDateTime;
+      if (!last) return true;
+      return Math.floor((now - new Date(last)) / 86400000) > 90;
+    }).length;
+    const guestRisk = guests.length <= 5 ? 100 : guests.length <= 15 ? 70 : 40;
+    const staleRisk = stale === 0 ? 100 : stale <= 3 ? 65 : 30;
+    const accessScore = Math.round((guestRisk * 0.5) + (staleRisk * 0.5));
+
+    // PILLAR 4: User Adoption Foundation (MFA registered = ready for Copilot auth)
+    const adoptionScore = mfaPct >= 80 ? 100 : mfaPct >= 50 ? 65 : mfaPct >= 25 ? 35 : 15;
+
+    // PILLAR 5: Licensing Posture
+    const licensedPct = members.length > 0 ? Math.round((licensed.length / members.length) * 100) : 0;
+    const licenseScore = licensedPct >= 80 ? 100 : licensedPct >= 50 ? 70 : licensedPct >= 25 ? 40 : 20;
+
+    const overall = Math.round((identityScore + dataScore + accessScore + adoptionScore + licenseScore) / 5);
+
+    return {
+      overall,
+      pillars: [
+        {
+          icon: '🔐', name: 'Identity Security', score: identityScore,
+          value: mfaPct + '%',
+          desc: `${mfaReg}/${mfaTotal} users MFA registered · ${caEnabled} CA policies active`,
+          bar: identityScore
+        },
+        {
+          icon: '🏷️', name: 'Data Governance', score: dataScore,
+          value: labelCount,
+          desc: `Sensitivity labels configured in tenant. Copilot requires labels to prevent data oversharing.`,
+          bar: dataScore
+        },
+        {
+          icon: '🛡️', name: 'Access Controls', score: accessScore,
+          value: guests.length + ' guests',
+          desc: `${guests.length} guest accounts · ${stale} stale member accounts detected`,
+          bar: accessScore
+        },
+        {
+          icon: '👥', name: 'Adoption Foundation', score: adoptionScore,
+          value: mfaPct + '%',
+          desc: `MFA registration rate — users must be MFA-enabled to authenticate with Copilot`,
+          bar: adoptionScore
+        },
+        {
+          icon: '📋', name: 'Licensing Posture', score: licenseScore,
+          value: licensedPct + '%',
+          desc: `${licensed.length} of ${members.length} users have M365 licenses assigned`,
+          bar: licenseScore
+        }
+      ]
+    };
+  }
+
+  function getRating(score) {
+    if (score >= 75) return 'ready';
+    if (score >= 45) return 'conditional';
+    return 'not-ready';
+  }
+
+  function getDeployDecision(score) {
+    if (score >= 75) return { icon: '✅', label: 'READY TO\nDEPLOY', cls: 'ready' };
+    if (score >= 45) return { icon: '⚠️', label: 'CONDITIONAL\nDEPLOY', cls: 'conditional' };
+    return { icon: '🚫', label: 'NOT READY\nTO DEPLOY', cls: 'not-ready' };
+  }
+
+  function renderAssessment(data) {
+    const { overall, pillars } = calcPillars(data);
+    const decision = getDeployDecision(overall);
+    const rating = getRating(overall);
+
+    // Score ring
+    const banner = document.getElementById('scoreBanner');
+    banner.classList.add('show');
+    const ring = document.getElementById('scoreRing');
+    const color = rating === 'ready' ? 'var(--green)' : rating === 'conditional' ? 'var(--yellow)' : 'var(--red)';
+    ring.style.stroke = color;
+    setTimeout(() => {
+      ring.style.strokeDashoffset = 377 - (377 * overall / 100);
+    }, 100);
+
+    let cur = 0;
+    const interval = setInterval(() => {
+      cur = Math.min(cur + 2, overall);
+      document.getElementById('scoreNum').textContent = cur;
+      if (cur >= overall) clearInterval(interval);
+    }, 20);
+
+    const verdictMap = { ready: 'READY', conditional: 'REVIEW NEEDED', 'not-ready': 'NOT READY' };
+    document.getElementById('scoreVerdict').textContent = verdictMap[rating];
+    document.getElementById('scoreVerdict').style.color = color;
+    document.getElementById('scoreNum').style.color = color;
+
+    document.getElementById('scoreDesc').textContent =
+      overall >= 75
+        ? `Your Messacanyon tenant scored ${overall}/100 across 5 Copilot readiness pillars. The environment meets the baseline requirements for a phased Copilot deployment.`
+        : overall >= 45
+        ? `Your Messacanyon tenant scored ${overall}/100. Some prerequisites need attention before a safe Copilot rollout. Review the remediation roadmap below.`
+        : `Your Messacanyon tenant scored ${overall}/100. Critical gaps detected. Deploying Copilot now risks data exposure and poor adoption. Address blockers first.`;
+
+    // Deploy badge
+    const badge = document.getElementById('deployBadge');
+    badge.className = `deploy-badge ${decision.cls}`;
+    document.getElementById('deployIcon').textContent = decision.icon;
+    document.getElementById('deployLabel').textContent = decision.label;
+
+    // Score chips
+    document.getElementById('scoreChips').innerHTML = pillars.map(p => {
+      const c = getRating(p.score);
+      const dotColor = c === 'ready' ? 'var(--green)' : c === 'conditional' ? 'var(--yellow)' : 'var(--red)';
+      return `<div class="score-chip"><span class="chip-dot" style="background:${dotColor}"></span>${p.name}: ${p.score}</div>`;
+    }).join('');
+
+    // Pillar cards
+    const grid = document.getElementById('pillarsGrid');
+    grid.innerHTML = '';
+    pillars.forEach((p, i) => {
+      const r = getRating(p.score);
+      const statusLabel = r === 'ready' ? 'READY' : r === 'conditional' ? 'REVIEW' : 'BLOCKER';
+      const el = document.createElement('div');
+      el.className = `pillar-card ${r}`;
+      el.innerHTML = `
+        <div class="pillar-top">
+          <div class="pillar-icon">${p.icon}</div>
+          <div class="pillar-score-badge">${statusLabel}</div>
+        </div>
+        <div class="pillar-value">${p.value}</div>
+        <div class="pillar-name">${p.name}</div>
+        <div class="pillar-desc">${p.desc}</div>
+        <div class="pillar-bar-wrap">
+          <div class="pillar-bar" data-target="${p.bar}" style="width:0%"></div>
+        </div>
+      `;
+      grid.appendChild(el);
+      setTimeout(() => {
+        el.classList.add('show');
+        el.querySelector('.pillar-bar').style.width = p.bar + '%';
+      }, 100 + i * 100);
+    });
+
+    // Recommendations
+    const recs = [];
+    const idPillar = pillars[0];
+    const dataPillar = pillars[1];
+    const accessPillar = pillars[2];
+
+    if (idPillar.score < 75) recs.push({ tag: 'BLOCKER', cls: 'rec-blocker', text: 'MFA coverage is below 75%. Copilot requires strong authentication for all users. Enable an MFA enforcement Conditional Access policy immediately before deployment.' });
+    if (dataPillar.score < 75) recs.push({ tag: 'BLOCKER', cls: 'rec-blocker', text: 'Sensitivity labels are insufficient or missing. Without proper data classification, Copilot can surface and share confidential content without restriction. Configure Microsoft Purview labels before enabling Copilot.' });
+    if (accessPillar.score < 75) recs.push({ tag: 'REQUIRED', cls: 'rec-required', text: 'Guest user and stale account exposure increases the risk of Copilot surfacing data to unintended users. Clean up inactive accounts and review guest access before rollout.' });
+    if (pillars[3].score < 75) recs.push({ tag: 'REQUIRED', cls: 'rec-required', text: 'User adoption foundation is weak. Run an MFA registration campaign and ensure all target users have completed security info registration at aka.ms/mysecurityinfo.' });
+    if (pillars[4].score < 75) recs.push({ tag: 'RECOMMENDED', cls: 'rec-recommended', text: 'Review licensing assignments. Ensure all Copilot target users have qualifying M365 E3/E5 base licenses before assigning Copilot add-on licenses.' });
+    if (recs.length === 0) recs.push({ tag: 'RECOMMENDED', cls: 'rec-recommended', text: 'Strong readiness posture! Consider a phased pilot rollout — start with 50-100 power users, collect feedback, then expand. Enable Copilot Dashboard in Viva Insights for adoption tracking.' });
+
+    const list = document.getElementById('recsList');
+    list.innerHTML = '';
+    recs.forEach((r, i) => {
+      const el = document.createElement('div');
+      el.className = 'rec-item';
+      el.innerHTML = `<span class="rec-tag ${r.cls}">${r.tag}</span>${r.text}`;
+      list.appendChild(el);
+      setTimeout(() => el.classList.add('show'), 300 + i * 100);
+    });
+
+    document.getElementById('pillarsWrap').style.display = 'block';
+    document.getElementById('scanTime').textContent = '// Assessed: ' + new Date().toLocaleTimeString();
+
+    if (window.appInsights?.trackEvent) {
+      window.appInsights.trackEvent({ name: 'CopilotReadinessRun', properties: { score: overall, decision: decision.label } });
+    }
+  }
+
+  async function runAssessment() {
+    const btn = document.getElementById('btnAssess');
+    btn.disabled = true;
+    btn.textContent = '⏳ Assessing...';
+    document.getElementById('scoreBanner').classList.remove('show');
+    document.getElementById('pillarsWrap').style.display = 'none';
+    document.getElementById('loadingWrap').classList.add('active');
+
+    const animPromise = animateLoading();
+
+    try {
+      const res = await fetch(LOGIC_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+
+      await animPromise;
+      await new Promise(r => setTimeout(r, 400));
+      document.getElementById('loadingWrap').classList.remove('active');
+
+      if (!res.ok) throw new Error('Logic App returned ' + res.status);
+      const data = await res.json();
+
+      renderAssessment(data);
+      showToast('🤖', 'Copilot readiness assessment complete!');
+
+    } catch (err) {
+      await animPromise;
+      document.getElementById('loadingWrap').classList.remove('active');
+      document.getElementById('pillarsWrap').style.display = 'block';
+      document.getElementById('pillarsGrid').innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div style="font-size:2rem;margin-bottom:0.75rem">⚠️</div>
+          <p style="font-family:var(--font-mono);font-size:0.78rem">Assessment failed: ${err.message}</p>
+        </div>`;
+      showToast('❌', 'Assessment failed — check console');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔄 Re-run Assessment';
+    }
+  }
+</script>
+</body>
+</html>

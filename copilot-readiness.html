@@ -460,7 +460,7 @@
       <div class="flow-arrow">→</div>
       <div class="flow-step">🔀 5 Graph API calls (parallel)</div>
       <div class="flow-arrow">→</div>
-      <div class="flow-step">📊 5 pillars scored</div>
+      <div class="flow-step">📊 Labels · SharePoint · Licensing · MFA · Audit</div>
       <div class="flow-arrow">→</div>
       <div class="flow-step">✅ Deploy decision rendered</div>
     </div>
@@ -474,11 +474,11 @@
     <div class="copilot-spinner"></div>
     <div class="loading-label" id="loadingLabel">// INITIALIZING COPILOT READINESS ASSESSMENT...</div>
     <div class="loading-steps">
-      <div class="lstep" id="ls1">→ Checking MFA coverage</div>
-      <div class="lstep" id="ls2">→ Auditing CA policies</div>
-      <div class="lstep" id="ls3">→ Scanning sensitivity labels</div>
-      <div class="lstep" id="ls4">→ Analyzing user base</div>
-      <div class="lstep" id="ls5">→ Calculating readiness score</div>
+      <div class="lstep" id="ls1">→ Scanning sensitivity labels</div>
+      <div class="lstep" id="ls2">→ Checking SharePoint sharing settings</div>
+      <div class="lstep" id="ls3">→ Auditing licensing posture</div>
+      <div class="lstep" id="ls4">→ Checking MFA registration</div>
+      <div class="lstep" id="ls5">→ Verifying audit logging</div>
     </div>
   </div>
 
@@ -558,11 +558,11 @@
   async function animateLoading() {
     const steps = ['ls1','ls2','ls3','ls4','ls5'];
     const labels = [
-      '// CHECKING MFA & IDENTITY SECURITY...',
-      '// AUDITING CONDITIONAL ACCESS POLICIES...',
-      '// SCANNING DATA GOVERNANCE POSTURE...',
-      '// ANALYZING USER BASE & LICENSES...',
-      '// CALCULATING COPILOT READINESS SCORE...'
+      '// SCANNING SENSITIVITY LABELS & DATA CLASSIFICATION...',
+      '// CHECKING SHAREPOINT EXTERNAL SHARING SETTINGS...',
+      '// AUDITING M365 LICENSING POSTURE...',
+      '// CHECKING MFA REGISTRATION RATE...',
+      '// VERIFYING PURVIEW AUDIT LOGGING...'
     ];
     for (let i = 0; i < steps.length; i++) {
       document.getElementById(steps[i]).className = 'lstep active';
@@ -573,84 +573,86 @@
   }
 
   function calcPillars(data) {
-    const mfaData = data.mfaData?.value || [];
-    const caPolicies = data.caPolicies?.value || [];
     const labels = data.sensitivityLabels?.value || [];
-    const users = data.users?.value || [];
-    const now = new Date();
+    const spSettings = data.sharepointSettings || {};
+    const skus = data.licensedSkus?.value || [];
+    const mfaData = data.mfaRegistration?.value || [];
+    const auditLogs = data.auditLogs || {};
 
-    const members = users.filter(u => u.userType !== 'Guest' && u.accountEnabled);
-    const guests = users.filter(u => u.userType === 'Guest');
-    const licensed = members.filter(u => u.assignedLicenses?.length > 0);
-
-    // PILLAR 1: Identity Security (MFA + CA)
-    const mfaReg = mfaData.filter(u => u.isMfaRegistered || u.methodsRegistered?.length > 0).length;
-    const mfaTotal = mfaData.length || members.length || 1;
-    const mfaPct = Math.round((mfaReg / mfaTotal) * 100);
-    const caEnabled = caPolicies.filter(p => p.state === 'enabled').length;
-    const identityScore = Math.round((mfaPct * 0.6) + (Math.min(caEnabled / 3, 1) * 100 * 0.4));
-
-    // PILLAR 2: Data Governance (Sensitivity Labels)
+    // PILLAR 1: Sensitivity Labels (Data Classification)
     const labelCount = labels.length;
-    const dataScore = labelCount >= 5 ? 100 : labelCount >= 3 ? 75 : labelCount >= 1 ? 45 : 10;
+    const labelScore = labelCount >= 5 ? 100 : labelCount >= 3 ? 75 : labelCount >= 1 ? 45 : 10;
 
-    // PILLAR 3: Access Controls (Guest + Admin exposure)
-    const stale = members.filter(u => {
-      const last = u.signInActivity?.lastSignInDateTime;
-      if (!last) return true;
-      return Math.floor((now - new Date(last)) / 86400000) > 90;
-    }).length;
-    const guestRisk = guests.length <= 5 ? 100 : guests.length <= 15 ? 70 : 40;
-    const staleRisk = stale === 0 ? 100 : stale <= 3 ? 65 : 30;
-    const accessScore = Math.round((guestRisk * 0.5) + (staleRisk * 0.5));
+    // PILLAR 2: SharePoint External Sharing
+    const sharingCap = spSettings.sharingCapability || 'externalUserAndGuestSharing';
+    const resharingEnabled = spSettings.isResharingByExternalUsersEnabled === true;
+    let sharingScore;
+    let sharingDisplay;
+    if (sharingCap === 'disabled') { sharingScore = 100; sharingDisplay = 'Disabled'; }
+    else if (sharingCap === 'existingExternalUserSharingOnly') { sharingScore = 85; sharingDisplay = 'Existing Guests Only'; }
+    else if (sharingCap === 'externalUserSharingOnly') { sharingScore = 60; sharingDisplay = 'Authenticated Guests'; }
+    else { sharingScore = resharingEnabled ? 20 : 35; sharingDisplay = 'Anyone (Links)'; }
 
-    // PILLAR 4: User Adoption Foundation (MFA registered = ready for Copilot auth)
-    const adoptionScore = mfaPct >= 80 ? 100 : mfaPct >= 50 ? 65 : mfaPct >= 25 ? 35 : 15;
+    // PILLAR 3: Licensing Readiness
+    const copilotBaseSkus = ['ENTERPRISEPREMIUM','ENTERPRISEPACK','SPE_E3','SPE_E5','BUSINESS_PREMIUM','M365EDU'];
+    const qualifyingSkus = skus.filter(s =>
+      copilotBaseSkus.some(c => s.skuPartNumber?.toUpperCase().includes(c)) && s.capabilityStatus === 'Enabled'
+    );
+    const licenseScore = qualifyingSkus.length > 0 ? 100 : skus.filter(s => s.capabilityStatus === 'Enabled').length > 0 ? 55 : 20;
+    const licenseDisplay = qualifyingSkus.length > 0 ? qualifyingSkus.length + ' qualifying' : skus.length + ' SKUs (no E3/E5)';
 
-    // PILLAR 5: Licensing Posture
-    const licensedPct = members.length > 0 ? Math.round((licensed.length / members.length) * 100) : 0;
-    const licenseScore = licensedPct >= 80 ? 100 : licensedPct >= 50 ? 70 : licensedPct >= 25 ? 40 : 20;
+    // PILLAR 4: MFA Registration Rate
+    const mfaReg = mfaData.filter(u => u.isMfaRegistered || u.methodsRegistered?.length > 0).length;
+    const mfaTotal = mfaData.length || 1;
+    const mfaPct = Math.round((mfaReg / mfaTotal) * 100);
+    const mfaScore = mfaPct >= 90 ? 100 : mfaPct >= 70 ? 75 : mfaPct >= 50 ? 45 : 20;
 
-    const overall = Math.round((identityScore + dataScore + accessScore + adoptionScore + licenseScore) / 5);
+    // PILLAR 5: Purview Audit Logging
+    const auditEnabled = auditLogs.value !== undefined;
+    const auditCount = auditLogs.value?.length || 0;
+    const auditScore = auditEnabled && auditCount > 0 ? 100 : auditEnabled ? 70 : 30;
+    const auditDisplay = auditEnabled ? (auditCount > 0 ? 'Active' : 'Enabled') : 'Not Configured';
+
+    const overall = Math.round((labelScore + sharingScore + licenseScore + mfaScore + auditScore) / 5);
 
     return {
       overall,
       pillars: [
         {
-          icon: '🔐', name: 'Identity Security', score: identityScore,
-          value: mfaPct + '%',
-          desc: `${mfaReg}/${mfaTotal} users MFA registered · ${caEnabled} CA policies active`,
-          bar: identityScore
+          icon: '🏷️', name: 'Data Classification', score: labelScore,
+          value: labelCount + (labelCount === 1 ? ' label' : ' labels'),
+          desc: `Sensitivity labels in Microsoft Purview. Copilot uses labels to prevent oversharing confidential data in AI-generated content and responses.`,
+          bar: labelScore
         },
         {
-          icon: '🏷️', name: 'Data Governance', score: dataScore,
-          value: labelCount,
-          desc: `Sensitivity labels configured in tenant. Copilot requires labels to prevent data oversharing.`,
-          bar: dataScore
+          icon: '🔗', name: 'SharePoint External Sharing', score: sharingScore,
+          value: sharingDisplay,
+          desc: `Tenant sharing capability: ${sharingDisplay}. Permissive sharing settings allow Copilot to surface and share content with external users.`,
+          bar: sharingScore
         },
         {
-          icon: '🛡️', name: 'Access Controls', score: accessScore,
-          value: guests.length + ' guests',
-          desc: `${guests.length} guest accounts · ${stale} stale member accounts detected`,
-          bar: accessScore
-        },
-        {
-          icon: '👥', name: 'Adoption Foundation', score: adoptionScore,
-          value: mfaPct + '%',
-          desc: `MFA registration rate — users must be MFA-enabled to authenticate with Copilot`,
-          bar: adoptionScore
-        },
-        {
-          icon: '📋', name: 'Licensing Posture', score: licenseScore,
-          value: licensedPct + '%',
-          desc: `${licensed.length} of ${members.length} users have M365 licenses assigned`,
+          icon: '📋', name: 'Licensing Readiness', score: licenseScore,
+          value: licenseDisplay,
+          desc: `M365 E3/E5/Business Premium SKUs are required base licenses before assigning the Microsoft 365 Copilot add-on ($30/user/month).`,
           bar: licenseScore
+        },
+        {
+          icon: '🔐', name: 'MFA Registration Rate', score: mfaScore,
+          value: mfaPct + '%',
+          desc: `${mfaReg} of ${mfaTotal} users registered for MFA. Copilot requires modern authentication — unregistered users cannot use Copilot features.`,
+          bar: mfaPct
+        },
+        {
+          icon: '🔍', name: 'Purview Audit Logging', score: auditScore,
+          value: auditDisplay,
+          desc: `Audit logging captures all Copilot interactions. Required for compliance, eDiscovery, and monitoring what data Copilot accessed on behalf of users.`,
+          bar: auditScore
         }
       ]
     };
   }
 
-  function getRating(score) {
+    function getRating(score) {
     if (score >= 75) return 'ready';
     if (score >= 45) return 'conditional';
     return 'not-ready';
@@ -738,16 +740,12 @@
 
     // Recommendations
     const recs = [];
-    const idPillar = pillars[0];
-    const dataPillar = pillars[1];
-    const accessPillar = pillars[2];
-
-    if (idPillar.score < 75) recs.push({ tag: 'BLOCKER', cls: 'rec-blocker', text: 'MFA coverage is below 75%. Copilot requires strong authentication for all users. Enable an MFA enforcement Conditional Access policy immediately before deployment.' });
-    if (dataPillar.score < 75) recs.push({ tag: 'BLOCKER', cls: 'rec-blocker', text: 'Sensitivity labels are insufficient or missing. Without proper data classification, Copilot can surface and share confidential content without restriction. Configure Microsoft Purview labels before enabling Copilot.' });
-    if (accessPillar.score < 75) recs.push({ tag: 'REQUIRED', cls: 'rec-required', text: 'Guest user and stale account exposure increases the risk of Copilot surfacing data to unintended users. Clean up inactive accounts and review guest access before rollout.' });
-    if (pillars[3].score < 75) recs.push({ tag: 'REQUIRED', cls: 'rec-required', text: 'User adoption foundation is weak. Run an MFA registration campaign and ensure all target users have completed security info registration at aka.ms/mysecurityinfo.' });
-    if (pillars[4].score < 75) recs.push({ tag: 'RECOMMENDED', cls: 'rec-recommended', text: 'Review licensing assignments. Ensure all Copilot target users have qualifying M365 E3/E5 base licenses before assigning Copilot add-on licenses.' });
-    if (recs.length === 0) recs.push({ tag: 'RECOMMENDED', cls: 'rec-recommended', text: 'Strong readiness posture! Consider a phased pilot rollout — start with 50-100 power users, collect feedback, then expand. Enable Copilot Dashboard in Viva Insights for adoption tracking.' });
+    if (pillars[0].score < 75) recs.push({ tag: 'BLOCKER', cls: 'rec-blocker', text: 'Sensitivity labels are missing or insufficient. Without data classification, Copilot cannot distinguish between public and confidential content — creating serious oversharing risk. Configure Microsoft Purview labels before any Copilot deployment.' });
+    if (pillars[1].score < 75) recs.push({ tag: 'BLOCKER', cls: 'rec-blocker', text: 'SharePoint external sharing is too permissive. Copilot can surface and share tenant content with external users if sharing is set to "Anyone with a link." Tighten to "Existing guests only" or stricter before enabling Copilot.' });
+    if (pillars[2].score < 75) recs.push({ tag: 'REQUIRED', cls: 'rec-required', text: 'No qualifying M365 base licenses detected. Microsoft 365 Copilot requires E3, E5, or Business Premium as a prerequisite license. Assign qualifying base licenses before purchasing Copilot add-ons at $30/user/month.' });
+    if (pillars[3].score < 75) recs.push({ tag: 'REQUIRED', cls: 'rec-required', text: 'MFA registration rate is below the recommended threshold. Copilot requires modern authentication for every user. Run an MFA registration campaign and enforce registration via Conditional Access before rollout.' });
+    if (pillars[4].score < 75) recs.push({ tag: 'REQUIRED', cls: 'rec-required', text: 'Purview audit logging needs attention. Enable Microsoft Purview audit logging to capture all Copilot interactions — required for compliance monitoring, eDiscovery, and understanding what data Copilot accessed.' });
+    if (recs.length === 0) recs.push({ tag: 'RECOMMENDED', cls: 'rec-recommended', text: 'Excellent readiness posture! Start with a 50-100 user pilot. Enable the Microsoft Copilot Dashboard in Viva Insights to track adoption and measure ROI from day one.' });
 
     const list = document.getElementById('recsList');
     list.innerHTML = '';

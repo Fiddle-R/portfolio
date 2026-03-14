@@ -52,36 +52,33 @@ async function submitResumeRequest() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+// Wire up directly — no DOMContentLoaded needed since script is at bottom of page
+var emailBtn = document.getElementById('emailBtn');
+if (emailBtn) {
+  emailBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = 'mai' + 'lto:fid' + 'dle2r@' + 'outlook.com';
+  });
+}
 
-  var emailBtn = document.getElementById('emailBtn');
-  if (emailBtn) {
-    emailBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      window.location.href = 'mai' + 'lto:fid' + 'dle2r@' + 'outlook.com';
-    });
-  }
+var resumeBtn = document.getElementById('resumeBtn');
+if (resumeBtn) {
+  resumeBtn.addEventListener('click', openResumeModal);
+}
 
-  var resumeBtn = document.getElementById('resumeBtn');
-  if (resumeBtn) {
-    resumeBtn.addEventListener('click', openResumeModal);
-  }
+var modalCloseBtn = document.getElementById('modalCloseBtn');
+if (modalCloseBtn) {
+  modalCloseBtn.addEventListener('click', closeResumeModal);
+}
 
-  var modalCloseBtn = document.getElementById('modalCloseBtn');
-  if (modalCloseBtn) {
-    modalCloseBtn.addEventListener('click', closeResumeModal);
-  }
+var modalOverlay = document.getElementById('resumeModal');
+if (modalOverlay) {
+  modalOverlay.addEventListener('click', function(e) {
+    if (e.target === modalOverlay) closeResumeModal();
+  });
+}
 
-  var modalOverlay = document.getElementById('resumeModal');
-  if (modalOverlay) {
-    modalOverlay.addEventListener('click', function(e) {
-      if (e.target === modalOverlay) closeResumeModal();
-    });
-  }
-
-  var submitBtn = document.getElementById('modalSubmitBtn');
-  if (submitBtn) {
-    submitBtn.addEventListener('click', submitResumeRequest);
-  }
-
-});
+var submitBtn = document.getElementById('modalSubmitBtn');
+if (submitBtn) {
+  submitBtn.addEventListener('click', submitResumeRequest);
+}

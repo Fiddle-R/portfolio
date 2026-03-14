@@ -623,6 +623,91 @@
       .skills-grid { grid-template-columns: 1fr; }
       .about-stats { grid-template-columns: 1fr 1fr; }
     }
+
+    /* RESUME REQUEST MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #0d1320;
+      border: 1px solid rgba(0,200,255,0.2);
+      border-radius: 16px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 460px;
+      margin: 1rem;
+      position: relative;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-close {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.25rem; cursor: pointer; line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-title {
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--text); margin-bottom: 0.4rem;
+    }
+    .modal-subtitle {
+      font-size: 0.82rem; color: var(--muted);
+      margin-bottom: 1.75rem; line-height: 1.6;
+    }
+    .modal-field {
+      margin-bottom: 1.1rem;
+    }
+    .modal-field label {
+      display: block; font-size: 0.72rem; font-weight: 600;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-bottom: 0.4rem;
+    }
+    .modal-field input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(0,200,255,0.15);
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .modal-field input:focus {
+      border-color: var(--accent);
+    }
+    .modal-field input::placeholder { color: var(--dim); }
+    .modal-submit {
+      width: 100%; margin-top: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      color: white; border: none; cursor: pointer;
+      padding: 0.85rem; border-radius: 8px;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.9rem; transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(0,200,255,0.25);
+    }
+    .modal-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,200,255,0.35); }
+    .modal-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .modal-success {
+      display: none; text-align: center; padding: 1.5rem 0;
+    }
+    .modal-success.active { display: block; }
+    .modal-success-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .modal-success h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .modal-success p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -906,7 +991,6 @@
         <span class="project-tag">SharePoint</span>
         <span class="project-tag">Excel / Reporting</span>
       </div>
-      <a href="/offboarding-demo.html" class="demo-btn">⚡ Live Demo →</a>
     </div>
   </div>
 </section>
@@ -1049,11 +1133,46 @@
     <a href="https://www.linkedin.com/in/fiddle-reynoso-835b318" target="_blank" class="contact-link">
       <span>💼</span> LinkedIn
     </a>
-    <a href="/Fiddle_Reynoso.pdf" target="_blank" class="contact-link">
-      <span>📄</span> Download Résumé
+    <a href="#" class="contact-link" onclick="openResumeModal(event)">
+      <span>📄</span> Request Résumé
     </a>
   </div>
 </section>
+
+<!-- RESUME REQUEST MODAL -->
+<div class="modal-overlay" id="resumeModal" onclick="closeOnOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeResumeModal()">✕</button>
+    <div id="modalForm">
+      <div class="modal-title">📄 Request Résumé</div>
+      <div class="modal-subtitle">Fill in your details and I'll send you my résumé within 1 business day.</div>
+      <div class="modal-field">
+        <label>Full Name *</label>
+        <input type="text" id="reqName" placeholder="Jane Smith" />
+      </div>
+      <div class="modal-field">
+        <label>Company / Organization *</label>
+        <input type="text" id="reqCompany" placeholder="Microsoft" />
+      </div>
+      <div class="modal-field">
+        <label>Email Address *</label>
+        <input type="email" id="reqEmail" placeholder="jane@microsoft.com" />
+      </div>
+      <div class="modal-field">
+        <label>Role You're Hiring For *</label>
+        <input type="text" id="reqRole" placeholder="M365 Solutions Architect" />
+      </div>
+      <button class="modal-submit" id="modalSubmitBtn" onclick="submitResumeRequest()">
+        Send Request
+      </button>
+    </div>
+    <div class="modal-success" id="modalSuccess">
+      <div class="modal-success-icon">✅</div>
+      <h3>Request Received!</h3>
+      <p>Thank you! Your request has been received.<br>You'll hear from me within 1 business day.</p>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -1062,6 +1181,66 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+  const RESUME_REQUEST_URL = 'https://prod-41.eastus2.logic.azure.com:443/workflows/ed6718ccf44f4618a3de1cf1cc950451/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=HqPeDXoxRkl7Tuwa0jU49ZAoZ1brRpsNaRAhz1tYIEA';
+
+  function openResumeModal(e) {
+    e.preventDefault();
+    document.getElementById('resumeModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeResumeModal() {
+    document.getElementById('resumeModal').classList.remove('active');
+    document.body.style.overflow = '';
+    // Reset form
+    setTimeout(() => {
+      document.getElementById('modalForm').style.display = 'block';
+      document.getElementById('modalSuccess').classList.remove('active');
+      document.getElementById('reqName').value = '';
+      document.getElementById('reqCompany').value = '';
+      document.getElementById('reqEmail').value = '';
+      document.getElementById('reqRole').value = '';
+      document.getElementById('modalSubmitBtn').disabled = false;
+      document.getElementById('modalSubmitBtn').textContent = 'Send Request';
+    }, 300);
+  }
+
+  function closeOnOverlay(e) {
+    if (e.target === document.getElementById('resumeModal')) closeResumeModal();
+  }
+
+  async function submitResumeRequest() {
+    const name = document.getElementById('reqName').value.trim();
+    const company = document.getElementById('reqCompany').value.trim();
+    const email = document.getElementById('reqEmail').value.trim();
+    const role = document.getElementById('reqRole').value.trim();
+
+    if (!name || !company || !email || !role) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const btn = document.getElementById('modalSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Sending...';
+
+    try {
+      await fetch(RESUME_REQUEST_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, company, email, role })
+      });
+      document.getElementById('modalForm').style.display = 'none';
+      document.getElementById('modalSuccess').classList.add('active');
+      setTimeout(closeResumeModal, 4000);
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Send Request';
+      alert('Something went wrong. Please try again.');
+    }
+  }
+
   // Email handler - split to avoid Cloudflare obfuscation
   function handleEmail(e) {
     e.preventDefault();

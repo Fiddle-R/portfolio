@@ -1127,22 +1127,22 @@
     Open to architecture-focused M365 / Azure roles, consulting engagements, and technical conversations.
   </p>
   <div class="contact-links">
-    <a href="#" class="contact-link" id="emailBtn" onclick="handleEmail(event)">
+    <a href="#" class="contact-link" id="emailBtn">
       <span>📧</span> <span>Send Email</span>
     </a>
     <a href="https://www.linkedin.com/in/fiddle-reynoso-835b318" target="_blank" class="contact-link">
       <span>💼</span> LinkedIn
     </a>
-    <a href="#" class="contact-link" onclick="openResumeModal(event)">
+    <a href="#" class="contact-link" id="resumeBtn">
       <span>📄</span> Request Résumé
     </a>
   </div>
 </section>
 
 <!-- RESUME REQUEST MODAL -->
-<div class="modal-overlay" id="resumeModal" onclick="closeOnOverlay(event)">
+<div class="modal-overlay" id="resumeModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeResumeModal()">✕</button>
+    <button class="modal-close" id="modalCloseBtn">✕</button>
     <div id="modalForm">
       <div class="modal-title">📄 Request Résumé</div>
       <div class="modal-subtitle">Fill in your details and I'll send you my résumé within 1 business day.</div>
@@ -1162,7 +1162,7 @@
         <label>Role You're Hiring For *</label>
         <input type="text" id="reqRole" placeholder="M365 Solutions Architect" />
       </div>
-      <button class="modal-submit" id="modalSubmitBtn" onclick="submitResumeRequest()">
+      <button class="modal-submit" id="modalSubmitBtn">
         Send Request
       </button>
     </div>

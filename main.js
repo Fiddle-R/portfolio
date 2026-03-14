@@ -1,4 +1,4 @@
-const RESUME_REQUEST_URL = 'https://prod-41.eastus2.logic.azure.com:443/workflows/ed6718ccf44f4618a3de1cf1cc950451/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=HqPeDXoxRkl7Tuwa0jU49ZAoZ1brRpsNaRAhz1tYIEA';
+var RESUME_REQUEST_URL = 'https://prod-41.eastus2.logic.azure.com:443/workflows/ed6718ccf44f4618a3de1cf1cc950451/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=HqPeDXoxRkl7Tuwa0jU49ZAoZ1brRpsNaRAhz1tYIEA';
 
 function openResumeModal(e) {
   e.preventDefault();
@@ -9,7 +9,7 @@ function openResumeModal(e) {
 function closeResumeModal() {
   document.getElementById('resumeModal').classList.remove('active');
   document.body.style.overflow = '';
-  setTimeout(() => {
+  setTimeout(function() {
     document.getElementById('modalForm').style.display = 'block';
     document.getElementById('modalSuccess').classList.remove('active');
     document.getElementById('reqName').value = '';
@@ -21,30 +21,26 @@ function closeResumeModal() {
   }, 300);
 }
 
-function closeOnOverlay(e) {
-  if (e.target === document.getElementById('resumeModal')) closeResumeModal();
-}
-
 async function submitResumeRequest() {
-  const name = document.getElementById('reqName').value.trim();
-  const company = document.getElementById('reqCompany').value.trim();
-  const email = document.getElementById('reqEmail').value.trim();
-  const role = document.getElementById('reqRole').value.trim();
+  var name = document.getElementById('reqName').value.trim();
+  var company = document.getElementById('reqCompany').value.trim();
+  var email = document.getElementById('reqEmail').value.trim();
+  var role = document.getElementById('reqRole').value.trim();
 
   if (!name || !company || !email || !role) {
     alert('Please fill in all fields.');
     return;
   }
 
-  const btn = document.getElementById('modalSubmitBtn');
+  var btn = document.getElementById('modalSubmitBtn');
   btn.disabled = true;
-  btn.textContent = '⏳ Sending...';
+  btn.textContent = 'Sending...';
 
   try {
     await fetch(RESUME_REQUEST_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, company, email, role })
+      body: JSON.stringify({ name: name, company: company, email: email, role: role })
     });
     document.getElementById('modalForm').style.display = 'none';
     document.getElementById('modalSuccess').classList.add('active');
@@ -56,7 +52,36 @@ async function submitResumeRequest() {
   }
 }
 
-function handleEmail(e) {
-  e.preventDefault();
-  window.location.href = 'mai' + 'lto:fid' + 'dle2r@' + 'outlook.com';
-}
+document.addEventListener('DOMContentLoaded', function() {
+
+  var emailBtn = document.getElementById('emailBtn');
+  if (emailBtn) {
+    emailBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'mai' + 'lto:fid' + 'dle2r@' + 'outlook.com';
+    });
+  }
+
+  var resumeBtn = document.getElementById('resumeBtn');
+  if (resumeBtn) {
+    resumeBtn.addEventListener('click', openResumeModal);
+  }
+
+  var modalCloseBtn = document.getElementById('modalCloseBtn');
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', closeResumeModal);
+  }
+
+  var modalOverlay = document.getElementById('resumeModal');
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) closeResumeModal();
+    });
+  }
+
+  var submitBtn = document.getElementById('modalSubmitBtn');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', submitResumeRequest);
+  }
+
+});
